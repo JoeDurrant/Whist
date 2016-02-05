@@ -2,6 +2,7 @@ package cards;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -56,6 +57,32 @@ public class Card implements Serializable, Comparable<Card>{
         return values[RANDOM.nextInt(4)];}
     }
    
+    /*public static class CompareAscending implements Comparator<Card>{
+
+        @Override
+        public int compare(Card o1, Card o2) {
+            
+        }
+        
+    }*/
+    
+    public static class CompareRank implements Comparator<Card>{
+
+        @Override
+        public int compare(Card card1, Card card2) {
+            if(card1.rank.ordinal() < card2.rank.ordinal()){
+                return -1;
+            }
+            else if(card1.rank.ordinal() == card2.rank.ordinal()){
+                return 0;
+            }
+            else{
+                return 1;
+            }
+        }
+        
+    }
+    
     /**
      * Creates a new Card object
      * @param r rank the card will have (Ace, King, Queen etc.)
