@@ -1,6 +1,6 @@
 package cards;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public class Card implements Serializable, Comparable<Card>{
         final int value;
     
         Rank(int value){
-        this.value = value;}
+            this.value = value;}
     
         Rank getPrevious(){
             Rank[] values = Rank.values();
@@ -43,45 +43,51 @@ public class Card implements Serializable, Comparable<Card>{
      * Enum to model each card suit
      */
     public enum Suit{
-    CLUBS,
-    DIAMONDS,
-    HEARTS,
-    SPADES;
+        CLUBS,
+        DIAMONDS,
+        HEARTS,
+        SPADES;
     
-    // Create .values() array and Random object to avoid recreating everytime 
-    // randomSuit method is called
-    private static final Random RANDOM = new Random();
-    
-    static Suit randomSuit(){
-        Suit[] values = Card.Suit.values();
-        return values[RANDOM.nextInt(4)];}
-    }
-   
-    /*public static class CompareAscending implements Comparator<Card>{
-
-        @Override
-        public int compare(Card o1, Card o2) {
-            
-        }
+        // Create .values() array and Random object to avoid recreating 
+        // everytime randomSuit method is called
+        private static final Random RANDOM = new Random();
+        static Suit[] values = Card.Suit.values();
         
-    }*/
-    
-    public static class CompareRank implements Comparator<Card>{
-
+        static Suit randomSuit(){
+            return values[RANDOM.nextInt(4)];}}
+   
+    /**
+     * Allows sorting of Card objects into ascending order using 
+     * Arrays.sort(Array[], Comparator)
+     */
+    public static class CompareAscending implements Comparator<Card>{
         @Override
         public int compare(Card card1, Card card2) {
-            if(card1.rank.ordinal() < card2.rank.ordinal()){
-                return -1;
-            }
-            else if(card1.rank.ordinal() == card2.rank.ordinal()){
-                return 0;
-            }
+            if(card1.getSuit().ordinal() == card2.getSuit().ordinal()){
+                if(card1.getRank().ordinal() < card2.rank.ordinal()){
+                    return -1;} 
+                else if(card1.getRank().ordinal() > card2.rank.ordinal()){
+                    return 1;}
+                else{
+                    return 0;}} // Assume this will not be reached as there are 
+                                // no duplicate cards in a deck
+            else if(card1.getSuit().ordinal() > card2.getSuit().ordinal()){
+                return -1;}
             else{
-                return 1;
-            }
-        }
-        
-    }
+                return 1;}}}
+    
+    /**
+     * Allows sorting of cards by Rank, without taking into consideration Suit
+     */
+    public static class CompareRank implements Comparator<Card>{
+        @Override
+        public int compare(Card card1, Card card2){
+            if(card1.getRank().ordinal() < card2.getRank().ordinal()){
+                return -1;}
+            else if(card1.getRank().ordinal() == card2.getRank().ordinal()){
+                return 0;}
+            else{
+                return 1;}}}
     
     /**
      * Creates a new Card object
@@ -106,26 +112,29 @@ public class Card implements Serializable, Comparable<Card>{
     public Suit getSuit(){
         return this.suit;}
     
+    /**
+     * Method to find the highest card in a list of Cards
+     * @param cardList an ArrayList of Card objects
+     * @return the highest card found in cardList
+     */
     public static Card max(ArrayList<Card> cardList){
         Card max = cardList.get(0);
         Iterator<Card> cardIterator = cardList.iterator();
         while(cardIterator.hasNext()) {
             Card card = cardIterator.next();
             if(card.compareTo(max) == 1){
-                max = card;}
-        }
+                max = card;}}
         return max;}
     
     @Override
     public int compareTo(Card card) {
         if(this.suit == card.getSuit()){
             if(card.getRank().ordinal() < this.rank.ordinal()){
-                return 1;} 
+                return -1;} 
             else if(card.getRank().ordinal() > this.rank.ordinal()){
-                return -1;}
-            else{
-                return 0;}} // Assume this will not be reached as there are no 
-                            // duplicate cards in a deck
+                return 1;}
+            else{           // Assume this will not be reached as there are no 
+                return 0;}} // duplicate cards in a deck          
         else if(this.suit.ordinal() > card.getSuit().ordinal()){
             return -1;}
         else{
